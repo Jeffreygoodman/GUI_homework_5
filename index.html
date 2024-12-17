@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrabble Board</title>
+    <style>
+        body {
+            background-color: #FBDDB5;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .scrabble-board-container {
+            position: relative;
+            width: 1129px; 
+            height: 80px; 
+            margin: 20px 0;
+            overflow: hidden;
+            border: 1px solid blue;
+        }
+        .board-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: 1fr; /* Only 1 row */
+            pointer-events: none; /* Prevent interference */
+            
+        }
+        .board-cell {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border: 1px solid red; /* Add borders if needed for debugging */
+        }
+        .scrabble-board {
+            width: 100%;
+            height: 100%;
+        }
+        .tile-holder-container {
+            position: relative;
+            width: 640px; 
+            height: 182px; 
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .tile-holder {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .tile-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px; /* Space between tiles */
+        }
+        .tile {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #333;
+            background-color: #FFFACD;
+            position: relative;
+            cursor: grab;
+        }
+        .tile:active {
+            cursor: grabbing;
+        }
+        h1 {
+            font-family: 'Courier New', Courier, monospace;
+            color: #f81f1f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scrabble</h1>
+    <div class="scrabble-board-container">
+        <img src="graphics_data/Scrabble_Board_OneLine.png" alt="Scrabble Board" class="scrabble-board">
+        <div class="board-overlay"></div>
+    </div>
+    <div class="tile-holder-container">
+        <img src="graphics_data/scrabble-tile-holder.png" alt="Scrabble Tile Holder" class="tile-holder">
+        <div class="tile-overlay"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
