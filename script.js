@@ -107,26 +107,29 @@ $(document).ready(function () {
                 if (closestCell && minDistance < 50) { // 50px threshold to snap
                     const cellOffset = closestCell.offset();
                     const boardOffset = $('.board-overlay').offset();
-    
+                
+                    // Calculate center of the cell and adjust tile's position
+                    const centerX = cellOffset.left - boardOffset.left *1.615 + (closestCell.width() - $tile.width()) / 2;
+                    const centerY = cellOffset.top - boardOffset.top * 1.39 + (closestCell.height() - $tile.height()) / 2;
+                
                     $tile.css({
-                        left: `${cellOffset.left - boardOffset.left + (closestCell.width() - $tile.width()) / 2}px`,
-                        top: `${cellOffset.top - boardOffset.top + (closestCell.height() - $tile.height()) / 2}px`
+                        left: `${centerX}px`,
+                        top: `${centerY}px`
                     });
-    
+                
                     console.log(`Placed ${$tile.find('img').attr('alt')} on the board`);
                 } else {
                     // Snap back to original position if not placed on the board
-                    const originalX = $tile.data('originalX') || 0; // Use saved data if available
+                    const originalX = $tile.data('originalX') || 0;
                     const originalY = $tile.data('originalY') || 0;
                     $tile.css({
                         transition: 'all 0.2s ease', // Smooth snapping
                         left: `${originalX}px`,
                         top: `${originalY}px`,
                     });
-    
+                
                     console.log(`${$tile.find('img').attr('alt')} returned to the tile holder.`);
                 }
-    
                 $tile.css('z-index', ''); // Reset z-index
             }
         });
