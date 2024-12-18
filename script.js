@@ -1,6 +1,6 @@
 let letterData = [];
 let placedTiles = [];
-
+let lastPlacedcell = {row: 0, col: 0};   
 $(document).ready(async function () {
     
     const createBoardGrid = () => {
@@ -109,34 +109,72 @@ $(document).ready(async function () {
                         closestCell = $cell;
                     }
                 });
-    
+                
+                
                 // Snap to the center of the closest cell if it's close enough
                 if (closestCell && minDistance < 50) { // 50px threshold to snap
                     const cellOffset = closestCell.offset();
                     const boardOffset = $('.board-overlay').offset();
-                
+                    
                     // Calculate center of the cell and adjust tile's position
                     const centerX = cellOffset.left - boardOffset.left *1.615 + (closestCell.width() - $tile.width()) / 2;
                     const centerY = cellOffset.top - boardOffset.top * 1.39 + (closestCell.height() - $tile.height()) / 2;
+                    if (placedTiles.length===0 && closestCell.data('col')===0){
+                        const letter = $tile.find('img').attr('alt');
+                        const value = getLetterValue(letter);
+                        const cellInfo ={
+                            letter: letter,
+                            value: value,
+                            col: closestCell.data('col')
+                    
+                        };
+                        $tile.css({
+                            left: `${centerX}px`,
+                            top: `${centerY}px`
+                        });
+                    placedTiles.push(cellInfo);
+                    lastPlacedcell = { col:0};
+                    console.log(`Placed ${letter} with value ${value} at col ${cellInfo.col}`);
+                    console.log(`Total word score: ${calculateWordScore()}`);
+            } else if (placedTiles.length > 0) {
+                const prevTile = placedTiles[placedTiles.length - 1];
                 
+                const prevCol = prevTile.col;
+
+                if (closestCell.data('col') === prevCol + 1) {
                     $tile.css({
                         left: `${centerX}px`,
                         top: `${centerY}px`
                     });
-                const letter = $tile.find('img').attr('alt');
-                const value = getLetterValue(letter);
-                const cellInfo ={
-                    letter: letter,
-                    value: value,
-                    row: closestCell.data('row'),
-                    col: closestCell.data('col')
-                    
-                };
-                placedTiles.push(cellInfo);
-                console.log(`Placed ${letter} with value ${value} at row ${cellInfo.row}, col ${cellInfo.col}`);
-                console.log(`Total word score: ${calculateWordScore()}`);
-                console.log('tile original position', originalX, originalY);
-                    //console.log(`Placed ${$tile.find('img').attr('alt')} on the board`);
+                    const letter = $tile.find('img').attr('alt');
+                    const value = getLetterValue(letter);
+                    const cellInfo = {
+                        letter: letter,
+                        value: value,
+                        col: closestCell.data('col')
+                    };
+                    placedTiles.push(cellInfo);
+                    lastPlacedcell = {row: closestCell.data('row'), col: closestCell.data('col')};
+                    console.log(`Placed ${letter} with value ${value} at row ${cellInfo.row}, col ${cellInfo.col}`);
+                    console.log(`Total word score: ${calculateWordScore()}`);
+
+                  }else {
+                    const originalX = $tile.data('originalX');
+                    const originalY = $tile.data('originalY');
+                    $tile.css({
+                        transition: 'all 0.2s ease', // Smooth snapping
+                        left: `${originalX}px`,
+                        top: `${originalY}px`,
+                    });
+                    removeTileFromBoard($tile);
+                    console.log(`${$tile.find('img').attr('alt')} returned to the tile holder.`);
+                    console.log('tile original position', originalX, originalY);
+                  }
+
+
+            }
+
+                     //console.log(`Placed ${$tile.find('img').attr('alt')} on the board`);
                 } else {
                     // Snap back to original position if not placed on the board
                     const originalX = $tile.data('originalX');
@@ -150,7 +188,7 @@ $(document).ready(async function () {
                     console.log(`${$tile.find('img').attr('alt')} returned to the tile holder.`);
                     console.log('tile original position', originalX, originalY);
                 }
-                $tile.css('z-index', ''); // Reset z-index
+                //$tile.css('z-index', ''); // Reset z-index
             }
         });
     };
@@ -187,9 +225,9 @@ $(document).ready(async function () {
                 console.log('Word score multiplied by 2!');
             }
         });
-    
+        $('#total-score').text(totalScore);
         return totalScore;
-    };
+    }; 
     // Get letter data and initialize the game
     const getLetter = async () => {
         try {

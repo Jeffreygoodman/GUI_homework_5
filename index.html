@@ -82,6 +82,39 @@
         .tile:active {
             cursor: grabbing;
         }
+        .score-container {
+            position: fixed;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%); /* Center vertically */
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+}
+        .submit-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+        #total-score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
         h1 {
             font-family: 'Courier New', Courier, monospace;
             color: #f81f1f;
@@ -98,6 +131,11 @@
         <img src="graphics_data/scrabble-tile-holder.png" alt="Scrabble Tile Holder" class="tile-holder">
         <div class="tile-overlay"></div>
     </div>
+    <div id = "score container" class = "score-container">
+        <h2>Total score</h2>
+        <div id ="total-score">0</div>
+    </div>
+    <button id="submit-button" class="submit-button">Submit Score</button>
     <script src="script.js"></script>
 </body>
 </html>
