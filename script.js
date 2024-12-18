@@ -1,4 +1,8 @@
-$(document).ready(function () {
+let letterData = [];
+let placedTiles = [];
+
+$(document).ready(async function () {
+    
     const createBoardGrid = () => {
         const $boardOverlay = $('.board-overlay');
 
@@ -58,12 +62,15 @@ $(document).ready(function () {
             $tile.css('transition', 'none'); // Disable snapping during dragging
     
             // Calculate the mouse offset relative to the tile's current position
+            if($tile.data('originalX') === undefined|| $tile.data('originalY') === undefined){
             const tileOffset = $tile.position(); // Use position() instead of offset()\
             $tile.data('originalX', tileOffset.left); // Save original position
             $tile.data('originalY', tileOffset.top);
             offsetX = e.pageX - tileOffset.left;
             offsetY = e.pageY - tileOffset.top;
-            
+            }
+            offsetX = e.pageX - $tile.position().left;
+            offsetY = e.pageY - $tile.position().top;
             $tile.css('z-index', 1000); // Bring the tile to the front
         });
     
@@ -116,25 +123,73 @@ $(document).ready(function () {
                         left: `${centerX}px`,
                         top: `${centerY}px`
                     });
-                
-                    console.log(`Placed ${$tile.find('img').attr('alt')} on the board`);
+                const letter = $tile.find('img').attr('alt');
+                const value = getLetterValue(letter);
+                const cellInfo ={
+                    letter: letter,
+                    value: value,
+                    row: closestCell.data('row'),
+                    col: closestCell.data('col')
+                    
+                };
+                placedTiles.push(cellInfo);
+                console.log(`Placed ${letter} with value ${value} at row ${cellInfo.row}, col ${cellInfo.col}`);
+                console.log(`Total word score: ${calculateWordScore()}`);
+                console.log('tile original position', originalX, originalY);
+                    //console.log(`Placed ${$tile.find('img').attr('alt')} on the board`);
                 } else {
                     // Snap back to original position if not placed on the board
-                    const originalX = $tile.data('originalX') || 0;
-                    const originalY = $tile.data('originalY') || 0;
+                    const originalX = $tile.data('originalX');
+                    const originalY = $tile.data('originalY');
                     $tile.css({
                         transition: 'all 0.2s ease', // Smooth snapping
                         left: `${originalX}px`,
                         top: `${originalY}px`,
                     });
-                
+                    removeTileFromBoard($tile);
                     console.log(`${$tile.find('img').attr('alt')} returned to the tile holder.`);
+                    console.log('tile original position', originalX, originalY);
                 }
                 $tile.css('z-index', ''); // Reset z-index
             }
         });
     };
-
+    const removeTileFromBoard = (tile) => {
+        // Remove the tile's data from the placedTiles array
+        const letter = tile.find('img').attr('alt');
+        const tileIndex = placedTiles.findIndex(item => item.letter === letter);
+        
+        if (tileIndex !== -1) {
+            // Subtract the tile's score
+            const tileValue = placedTiles[tileIndex].value;
+            placedTiles.splice(tileIndex, 1);
+            console.log(`Removed ${letter} with value ${tileValue}.`);
+    
+            // Recalculate the word score
+            console.log(`Total word score after removal: ${calculateWordScore()}`);
+        }
+    };
+    const calculateWordScore = () => {
+        let totalScore = 0;
+    
+        // Loop through the placed tiles and sum their points
+        placedTiles.forEach(tile => {
+            totalScore += tile.value;
+        });
+    
+        // Check for word multipliers
+        placedTiles.forEach(tile => {
+            const $cell = $(`.board-cell[data-row=${tile.row}][data-col=${tile.col}]`);
+            
+            // Example: Check for word-multiply special cell
+            if ($cell.attr('data-special') === 'word-multiply') {
+                totalScore *= 2; // Multiply the word score by 2
+                console.log('Word score multiplied by 2!');
+            }
+        });
+    
+        return totalScore;
+    };
     // Get letter data and initialize the game
     const getLetter = async () => {
         try {
@@ -173,6 +228,11 @@ $(document).ready(function () {
         const letters = await getRandomLetters(7); // Get 7 random letters
         displayLettersOnHolder(letters);
     };
-
+    const getLetterValue = (letter) => {
+        const letterObj = letterData.find(obj => obj.letter === letter);
+        return letterObj ? letterObj.value : 0;
+    }
+    letterData = await getLetter();
     initializeGame();
+    
 });
