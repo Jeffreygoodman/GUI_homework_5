@@ -49,6 +49,38 @@ $(document).ready(async function () {
             currentX += tileSpacing;
         });
     };
+    const replaceLettersOnHolder = (letters,_left,_top) => {
+        const $tileOverlay = $('.tile-overlay');
+        
+
+        let currentX = 0;
+        currentY = 0;
+        const tileSpacing = 60;
+        const horOffset = 110;
+        const vertOffset = 20;
+
+        letters.forEach(letter => {
+            const $tile = $('<div>')
+                .addClass('tile')
+                .css({
+                    position: 'absolute',
+                    left: `${_left}px`,
+                    top: `${_top}px`,
+                });
+
+            const $tileImage = $('<img>')
+                .attr('src', letter.image)
+                .attr('alt', letter.letter)
+                .css({ width: '100%', height: '100%' });
+
+            $tile.append($tileImage);
+            $tileOverlay.append($tile);
+
+            // Add drag-and-drop functionality
+            addDragAndDrop($tile);
+            currentX += tileSpacing;
+        });
+    }
 
     const addDragAndDrop = ($tile) => {
         let isDragging = false;
@@ -126,8 +158,8 @@ $(document).ready(async function () {
                         const cellInfo ={
                             letter: letter,
                             value: value,
-                            col: closestCell.data('col')
-                    
+                            col: closestCell.data('col'),
+                            originalPosition: { x: $tile.data('originalX'), y: $tile.data('originalY') }
                         };
                         $tile.css({
                             left: `${centerX}px`,
@@ -152,7 +184,8 @@ $(document).ready(async function () {
                     const cellInfo = {
                         letter: letter,
                         value: value,
-                        col: closestCell.data('col')
+                        col: closestCell.data('col'),
+                        originalPosition: { x: $tile.data('originalX'), y: $tile.data('originalY') }  // Store original position
                     };
                     placedTiles.push(cellInfo);
                     lastPlacedcell = {row: closestCell.data('row'), col: closestCell.data('col')};
@@ -219,7 +252,7 @@ $(document).ready(async function () {
         const removedTiles = [...placedTiles];
         placedTiles.length = 0;
         
-        // Log the removed tiles
+        //Log the removed tiles
         removedTiles.forEach(tile => {
             console.log(`Removed ${tile.letter} with value ${tile.value}.`);
         });
@@ -304,16 +337,18 @@ $(document).ready(async function () {
         console.log('total score:', totalScoreAccumulated);
         $('#total-score').text(totalScoreAccumulated);
         // Clear the placed tiles from the board
-        clearPlacedTiles();
         
         // Reset the score display
         $('#word-score').text(0);
     
         // Get new random letters equal to number of tiles removed
-        if (numTilesToReplace > 0) {
-            const newLetters = await getRandomLetters(numTilesToReplace);
-            displayLettersOnHolder(newLetters);
+        
+            for (const tile of placedTiles) {
+                const newLetter = await getRandomLetters(1);
+                console.log('is anything happening')
+                replaceLettersOnHolder(newLetter,tile.originalPosition.x,tile.originalPosition.y);
         }
+        clearPlacedTiles();
         
         console.log(`Submit button was pressed - replaced ${numTilesToReplace} tiles`);
     };
@@ -333,4 +368,3 @@ $(document).ready(async function () {
    
    
 });
-
