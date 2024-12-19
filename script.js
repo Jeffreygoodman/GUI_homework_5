@@ -169,6 +169,8 @@ $(document).ready(async function () {
                     lastPlacedcell = { col:0};
                     console.log(`Placed ${letter} with value ${value} at col ${cellInfo.col}`);
                     console.log(`Total word score: ${calculateWordScore()}`);
+                    wordScore = calculateWordScore();
+                    $('#word-score').text(wordScore);
             } else if (placedTiles.length > 0) {
                 const prevTile = placedTiles[placedTiles.length - 1];
                 
@@ -191,6 +193,9 @@ $(document).ready(async function () {
                     lastPlacedcell = {row: closestCell.data('row'), col: closestCell.data('col')};
                     console.log(`Placed ${letter} with value ${value} at row ${cellInfo.row}, col ${cellInfo.col}`);
                     console.log(`Total word score: ${calculateWordScore()}`);
+                    wordScore = calculateWordScore();
+                    $('#word-score').text(wordScore);
+                    
 
                   }else {
                     const originalX = $tile.data('originalX');
@@ -200,15 +205,21 @@ $(document).ready(async function () {
                         left: `${originalX}px`,
                         top: `${originalY}px`,
                     });
+                  
+                    
                     removeTileFromBoard($tile);
                     console.log(`${$tile.find('img').attr('alt')} returned to the tile holder.`);
                     console.log('tile original position', originalX, originalY);
+                    wordScore = calculateWordScore();
+                    $('#word-score').text(wordScore);
+
+                    
                   }
 
 
             }
 
-                     //console.log(`Placed ${$tile.find('img').attr('alt')} on the board`);
+                    
                 } else {
                     // Snap back to original position if not placed on the board
                     const originalX = $tile.data('originalX');
@@ -218,9 +229,12 @@ $(document).ready(async function () {
                         left: `${originalX}px`,
                         top: `${originalY}px`,
                     });
+                   
+                    
                     removeTileFromBoard($tile);
                     console.log(`${$tile.find('img').attr('alt')} returned to the tile holder.`);
                     console.log('tile original position', originalX, originalY);
+                    
                 }
                 //$tile.css('z-index', ''); // Reset z-index
             }
@@ -281,22 +295,41 @@ $(document).ready(async function () {
     
         // Loop through the placed tiles and sum their points
         placedTiles.forEach(tile => {
-            wordScore += tile.value;
+            // Add the value of the letter to the word score
+            let letterScore = tile.value;
+            console.log('inside of calculated word score');
+            // Check if the tile is in a column that multiplies the letter's score (columns 7 and 9)
+            if (tile.col === 6 || tile.col === 8) {
+                letterScore *= 2;
+            }
+    
+            // Add the letter's score to the total word score
+            wordScore += letterScore;
+    
+            // Log each tile's score for debugging
+            console.log(`Tile ${tile.letter} at col ${tile.col} contributes ${letterScore} to word score.`);
         });
     
-        // Check for word multipliers
+        // Check for word multipliers in columns 3 and 13
         placedTiles.forEach(tile => {
-            const $cell = $(`.board-cell[data-row=${tile.row}][data-col=${tile.col}]`);
-            
-            // Example: Check for word-multiply special cell
-            if ($cell.attr('data-special') === 'word-multiply') {
-                wordScore *= 2; // Multiply the word score by 2
-                console.log('Word score multiplied by 2!');
+            if (tile.col === 2) {
+                // If the letter is in the 3rd column, multiply the word score by 2
+                wordScore *= 2;
+                console.log("Word score multiplied by 2 for reaching column 3!");
+            } else if (tile.col === 12) {
+                // If the letter is in the 13th column, multiply the word score by 2 again
+                wordScore *= 2;
+                console.log("Word score multiplied by 2 for reaching column 13!");
             }
         });
+    
+        // Update the displayed word score
         $('#word-score').text(wordScore);
+    
+        // Return the calculated word score
         return wordScore;
-    }; 
+    };
+    
     // Get letter data and initialize the game
     const getLetter = async () => {
         try {
@@ -332,6 +365,8 @@ $(document).ready(async function () {
     const submitScore = async () => {
         const numTilesToReplace = placedTiles.length; // Store this before clearing
         const wordScore = calculateWordScore();
+        console.log('placed tiles:', placedTiles);
+        console.log('placed tiles length:', placedTiles.length);
         totalScoreAccumulated += wordScore;
         console.log('word score:', wordScore);
         console.log('total score:', totalScoreAccumulated);
@@ -352,9 +387,10 @@ $(document).ready(async function () {
         
         console.log(`Submit button was pressed - replaced ${numTilesToReplace} tiles`);
     };
+    
     const initializeGame = async () => {
         createBoardGrid();
-        const letters = await getRandomLetters(7); // Get 7 random letters
+        const letters = await getRandomLetters(13); // Get 7 random letters
         displayLettersOnHolder(letters);
     };
     const getLetterValue = (letter) => {
