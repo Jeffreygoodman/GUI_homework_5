@@ -281,24 +281,24 @@ $(document).ready(async function () {
         const tileIndex = placedTiles.findIndex(item => item.letter === letter);
         
        
-            // Subtract the tile's score
+            //subtract the tile's score
             const tileValue = placedTiles[tileIndex].value;
-            placedTiles.splice(tileIndex, 1);
+            placedTiles.splice(tileIndex,1);
             console.log(`Removed ${letter} with value ${tileValue}.`);
     
-            // Recalculate the word score
+            // recalculate the word score
             console.log(`Total word score after removal: ${calculateWordScore()}`);
         
     };
     const calculateWordScore = () => {
         let wordScore = 0;
     
-        // Loop through the placed tiles and sum their points
+        // loop through the placed tiles and sum their points
         placedTiles.forEach(tile => {
-            // Add the value of the letter to the word score
+            //add the value of the letter to the word score
             let letterScore = tile.value;
             console.log('inside of calculated word score');
-            // Check if the tile is in a column that multiplies the letters score (columns 7 and 9)
+            // Check if the tile is in a column that multiplies the letters score 
             if (tile.col === 6 || tile.col === 8) {
                 letterScore *= 2;
             }
@@ -306,7 +306,7 @@ $(document).ready(async function () {
             // Add the letter's score to the total word score
             wordScore += letterScore;
     
-            // Log each tile's score for debugging
+            // Log each tiles score for debugging
             console.log(`Tile ${tile.letter} at col ${tile.col} contributes ${letterScore} to word score.`);
         });
     
@@ -317,7 +317,7 @@ $(document).ready(async function () {
                 wordScore *= 2;
                 console.log("Word score multiplied by 2 for reaching column 3");
             } else if (tile.col ===12) {
-                // If the letter is in the 13th column, multiply the word score by 2 again
+                // If the letter is in the 13th column multiply the word score by 2 again
                 wordScore *= 2;
                 console.log("Word score multiplied by 2 for reaching column 13");
             }
@@ -326,7 +326,7 @@ $(document).ready(async function () {
         // Update the displayed word score
         $('#word-score').text(wordScore);
     
-        // Return the calculated word score
+        //return the calculated word score
         return wordScore;
     };
     
@@ -357,8 +357,8 @@ $(document).ready(async function () {
         const randomLetters = [];
         for (let i = 0; i < count; i++) {
             const randomIndex = Math.floor(Math.random() * weightedLetterPool.length);
-            randomLetters.push(weightedLetterPool[randomIndex]);
-            weightedLetterPool.splice(randomIndex, 1);
+            randomLetters.push(weightedLetterPool[randomIndex]); // Add the letter to the randomLetters array
+            weightedLetterPool.splice(randomIndex, 1); // Remove the letter from the pool
         }
         return randomLetters;
     };
@@ -371,7 +371,7 @@ $(document).ready(async function () {
         console.log('word score:', wordScore);
         console.log('total score:', totalScoreAccumulated);
         $('#total-score').text(totalScoreAccumulated);
-        // Clear the placed tiles from the board
+       
         
         // Reset the score display
         $('#word-score').text(0);
@@ -412,15 +412,15 @@ $(document).ready(async function () {
         //Clear the tiles from the board
         clearPlacedTiles();
     
-        // Re-initialize the game by resetting the tile rack
-        const letters = await getRandomLetters(13); // Get 7 new random letters
+       
+        const letters = await getRandomLetters(13); // Get 13 new random letters
         displayLettersOnHolder(letters);  // Refresh the tile rack with new letters
     };
     
     letterData = await getLetter();
     initializeGame();
-    $('#submit-button').on('click', submitScore);
-    $('#restart-button').on('click', restartGame);
+    $('#submit-button').on('click', submitScore); // press to submit score
+    $('#restart-button').on('click', restartGame); // press to restart game
    
    
 });
