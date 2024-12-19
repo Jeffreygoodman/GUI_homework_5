@@ -1,3 +1,5 @@
+
+// Jeffrey Goodman
 let letterData = [];
 let placedTiles = [];
 let lastPlacedcell = {row: 0, col: 0};   

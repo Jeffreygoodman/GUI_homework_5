@@ -1,3 +1,4 @@
+/* Jeffrey Goodman*/
 body {
     background-color: #FBDDB5;
     margin: 0;
@@ -140,17 +141,17 @@ h1 {
 #restart-button {
     position: fixed; /* Fix the position of the button on the screen */
     bottom: 20px; /* Distance from the top */
-    right: 20px; /* Distance from the right */
+    right: 20px; 
     padding: 10px 20px;
-    background-color: #FF5722; /* A different color for the restart button */
+    background-color: #FF5722; /* A different color for the restart button*/
     color: white;
     font-size: 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    z-index: 10; /* Ensure it's above other content */
+    z-index: 10; 
 }
 
 #restart-button:hover {
-    background-color: #FF7043; /* Change color on hover */
+    background-color: #FF7043; /* Change color on hover*/
 }
