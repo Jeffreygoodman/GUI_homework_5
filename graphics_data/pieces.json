@@ -25,7 +25,7 @@
 	{"letter":"W", "value":4, "amount":2,"image":"graphics_data/Scrabble_Tiles/W.jpg"},
 	{"letter":"X", "value":8, "amount":1,"image":"graphics_data/Scrabble_Tiles/X.jpg"},
 	{"letter":"Y", "value":4, "amount":2,"image":"graphics_data/Scrabble_Tiles/Y.jpg"},
-	{"letter":"Z", "value":10, "amount":1,"image":"graphics_data/Scrabble_Tiles/Z.jpg"}
-],
-"creator":"Ramon Meza"
+	{"letter":"Z", "value":10, "amount":1,"image":"graphics_data/Scrabble_Tiles/Z.jpg"},
+	{"letter":"_", "value":0, "amount":2,"image":"graphics_data/Scrabble_Tiles/Blank.jpg"}
+]
 }

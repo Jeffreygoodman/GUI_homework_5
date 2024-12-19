@@ -1,6 +1,7 @@
 let letterData = [];
 let placedTiles = [];
 let lastPlacedcell = {row: 0, col: 0};   
+let totalScoreAccumulated = 0;
 $(document).ready(async function () {
     
     const createBoardGrid = () => {
@@ -18,7 +19,7 @@ $(document).ready(async function () {
 
     const displayLettersOnHolder = (letters) => {
         const $tileOverlay = $('.tile-overlay');
-        $tileOverlay.empty(); // Clear existing letters
+        //$tileOverlay.empty(); // Clear existing letters
 
         let currentX = 0;
         currentY = 0;
@@ -192,12 +193,47 @@ $(document).ready(async function () {
             }
         });
     };
+    
+    const clearPlacedTiles = () => {
+        // Get the board boundaries
+        const $boardOverlay = $('.board-overlay');
+        const boardBounds = $boardOverlay[0].getBoundingClientRect();
+    
+        // Find all tiles
+        $('.tile').each(function() {
+            const $tile = $(this);
+            const tilePos = $tile[0].getBoundingClientRect();
+            
+            // Check if tile is within board boundaries
+            if (tilePos.top >= boardBounds.top && 
+                tilePos.bottom <= boardBounds.bottom && 
+                tilePos.left >= boardBounds.left && 
+                tilePos.right <= boardBounds.right) {
+                
+                // Remove the tile from DOM if it's on the board
+                $tile.remove();
+            }
+        });
+    
+        // Clear the placedTiles array after removing DOM elements
+        const removedTiles = [...placedTiles];
+        placedTiles.length = 0;
+        
+        // Log the removed tiles
+        removedTiles.forEach(tile => {
+            console.log(`Removed ${tile.letter} with value ${tile.value}.`);
+        });
+        
+        console.log(`Total word score after removal: ${calculateWordScore()}`);
+    };
+        
     const removeTileFromBoard = (tile) => {
         // Remove the tile's data from the placedTiles array
+       
         const letter = tile.find('img').attr('alt');
         const tileIndex = placedTiles.findIndex(item => item.letter === letter);
         
-        if (tileIndex !== -1) {
+       
             // Subtract the tile's score
             const tileValue = placedTiles[tileIndex].value;
             placedTiles.splice(tileIndex, 1);
@@ -205,14 +241,14 @@ $(document).ready(async function () {
     
             // Recalculate the word score
             console.log(`Total word score after removal: ${calculateWordScore()}`);
-        }
+        
     };
     const calculateWordScore = () => {
-        let totalScore = 0;
+        let wordScore = 0;
     
         // Loop through the placed tiles and sum their points
         placedTiles.forEach(tile => {
-            totalScore += tile.value;
+            wordScore += tile.value;
         });
     
         // Check for word multipliers
@@ -221,12 +257,12 @@ $(document).ready(async function () {
             
             // Example: Check for word-multiply special cell
             if ($cell.attr('data-special') === 'word-multiply') {
-                totalScore *= 2; // Multiply the word score by 2
+                wordScore *= 2; // Multiply the word score by 2
                 console.log('Word score multiplied by 2!');
             }
         });
-        $('#total-score').text(totalScore);
-        return totalScore;
+        $('#word-score').text(wordScore);
+        return wordScore;
     }; 
     // Get letter data and initialize the game
     const getLetter = async () => {
@@ -260,7 +296,27 @@ $(document).ready(async function () {
         }
         return randomLetters;
     };
-
+    const submitScore = async () => {
+        const numTilesToReplace = placedTiles.length; // Store this before clearing
+        const wordScore = calculateWordScore();
+        totalScoreAccumulated += wordScore;
+        console.log('word score:', wordScore);
+        console.log('total score:', totalScoreAccumulated);
+        $('#total-score').text(totalScoreAccumulated);
+        // Clear the placed tiles from the board
+        clearPlacedTiles();
+        
+        // Reset the score display
+        $('#word-score').text(0);
+    
+        // Get new random letters equal to number of tiles removed
+        if (numTilesToReplace > 0) {
+            const newLetters = await getRandomLetters(numTilesToReplace);
+            displayLettersOnHolder(newLetters);
+        }
+        
+        console.log(`Submit button was pressed - replaced ${numTilesToReplace} tiles`);
+    };
     const initializeGame = async () => {
         createBoardGrid();
         const letters = await getRandomLetters(7); // Get 7 random letters
@@ -272,5 +328,9 @@ $(document).ready(async function () {
     }
     letterData = await getLetter();
     initializeGame();
-    
+    $('#submit-button').on('click', submitScore);
+   
+   
+   
 });
+

@@ -53,7 +53,7 @@
             margin-bottom: 20px;
         }
         .tile-holder {
-            width: 100%;
+            width: 150%;
             height: 100%;
             display: block;
         }
@@ -115,6 +115,18 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        #total-score-container {
+            position: fixed;
+            top: 10%;  /* Move it up from the bottom */
+            right: 10px;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+        }
         h1 {
             font-family: 'Courier New', Courier, monospace;
             color: #f81f1f;
@@ -132,8 +144,12 @@
         <div class="tile-overlay"></div>
     </div>
     <div id = "score container" class = "score-container">
-        <h2>Total score</h2>
-        <div id ="total-score">0</div>
+        <h2>Word score</h2>
+        <div id ="word-score">0</div>
+    </div>
+    <div id="total-score-container" class="score-container">
+        <h2>Total Score</h2>
+        <div id="total-score">0</div>
     </div>
     <button id="submit-button" class="submit-button">Submit Score</button>
     <script src="script.js"></script>
