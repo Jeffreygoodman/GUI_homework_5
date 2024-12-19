@@ -19,7 +19,7 @@ $(document).ready(async function () {
 
     const displayLettersOnHolder = (letters) => {
         const $tileOverlay = $('.tile-overlay');
-        //$tileOverlay.empty(); // Clear existing letters
+        $tileOverlay.empty(); // Clear existing letters
 
         let currentX = 0;
         currentY = 0;
@@ -76,7 +76,7 @@ $(document).ready(async function () {
             $tile.append($tileImage);
             $tileOverlay.append($tile);
 
-            // Add drag-and-drop functionality
+            // add drag and drop functionality
             addDragAndDrop($tile);
             currentX += tileSpacing;
         });
@@ -89,27 +89,27 @@ $(document).ready(async function () {
         originalX = 0;
         originalY = 0;
         $tile.on('mousedown', function (e) {
-            e.preventDefault(); // Prevent default behavior
+            e.preventDefault(); //prevent default behavior
     
             isDragging = true;
             $tile.css('transition', 'none'); // Disable snapping during dragging
     
-            // Calculate the mouse offset relative to the tile's current position
+            // calculate the mouse offset relative to the tile's current position
             if($tile.data('originalX') === undefined|| $tile.data('originalY') === undefined){
             const tileOffset = $tile.position(); // Use position() instead of offset()\
-            $tile.data('originalX', tileOffset.left); // Save original position
+            $tile.data('originalX', tileOffset.left); // save original position
             $tile.data('originalY', tileOffset.top);
             offsetX = e.pageX - tileOffset.left;
             offsetY = e.pageY - tileOffset.top;
             }
             offsetX = e.pageX - $tile.position().left;
             offsetY = e.pageY - $tile.position().top;
-            $tile.css('z-index', 1000); // Bring the tile to the front
+            $tile.css('z-index', 1000); // bring the tile to the front
         });
     
         $(document).on('mousemove', function (e) {
             if (isDragging) {
-                // Move the tile with the cursor
+                // move the tile with the cursor
                 $tile.css({
                     left: `${e.pageX - offsetX}px`,
                     top: `${e.pageY - offsetY}px`
@@ -125,7 +125,7 @@ $(document).ready(async function () {
                 let closestCell = null;
                 let minDistance = Infinity;
     
-                // Find the nearest board cell
+                // find the nearest board cell
                 $boardCells.each(function () {
                     const $cell = $(this);
                     const cellOffset = $cell.offset();
@@ -144,12 +144,12 @@ $(document).ready(async function () {
                 });
                 
                 
-                // Snap to the center of the closest cell if it's close enough
+                //snap to the center of the closest cell if it's close enough
                 if (closestCell && minDistance < 50) { // 50px threshold to snap
                     const cellOffset = closestCell.offset();
                     const boardOffset = $('.board-overlay').offset();
                     
-                    // Calculate center of the cell and adjust tile's position
+                    //calculate center of the cell and adjust tiles position
                     const centerX = cellOffset.left - boardOffset.left *1.615 + (closestCell.width() - $tile.width()) / 2;
                     const centerY = cellOffset.top - boardOffset.top * 1.39 + (closestCell.height() - $tile.height()) / 2;
                     if (placedTiles.length===0 && closestCell.data('col')===0){
@@ -251,13 +251,13 @@ $(document).ready(async function () {
             const $tile = $(this);
             const tilePos = $tile[0].getBoundingClientRect();
             
-            // Check if tile is within board boundaries
+           
             if (tilePos.top >= boardBounds.top && 
                 tilePos.bottom <= boardBounds.bottom && 
                 tilePos.left >= boardBounds.left && 
                 tilePos.right <= boardBounds.right) {
                 
-                // Remove the tile from DOM if it's on the board
+               
                 $tile.remove();
             }
         });
@@ -275,7 +275,7 @@ $(document).ready(async function () {
     };
         
     const removeTileFromBoard = (tile) => {
-        // Remove the tile's data from the placedTiles array
+        //remove the tiles data from the placedTiles array
        
         const letter = tile.find('img').attr('alt');
         const tileIndex = placedTiles.findIndex(item => item.letter === letter);
@@ -298,7 +298,7 @@ $(document).ready(async function () {
             // Add the value of the letter to the word score
             let letterScore = tile.value;
             console.log('inside of calculated word score');
-            // Check if the tile is in a column that multiplies the letter's score (columns 7 and 9)
+            // Check if the tile is in a column that multiplies the letters score (columns 7 and 9)
             if (tile.col === 6 || tile.col === 8) {
                 letterScore *= 2;
             }
@@ -311,15 +311,15 @@ $(document).ready(async function () {
         });
     
         // Check for word multipliers in columns 3 and 13
-        placedTiles.forEach(tile => {
+        placedTiles.forEach(tile=> {
             if (tile.col === 2) {
                 // If the letter is in the 3rd column, multiply the word score by 2
                 wordScore *= 2;
-                console.log("Word score multiplied by 2 for reaching column 3!");
-            } else if (tile.col === 12) {
+                console.log("Word score multiplied by 2 for reaching column 3");
+            } else if (tile.col ===12) {
                 // If the letter is in the 13th column, multiply the word score by 2 again
                 wordScore *= 2;
-                console.log("Word score multiplied by 2 for reaching column 13!");
+                console.log("Word score multiplied by 2 for reaching column 13");
             }
         });
     
@@ -331,10 +331,10 @@ $(document).ready(async function () {
     };
     
     // Get letter data and initialize the game
-    const getLetter = async () => {
+    const getLetter = async ()=> {
         try {
-            const response = await fetch('graphics_data/pieces.json');
-            const data = await response.json();
+            const response =await fetch('graphics_data/pieces.json');
+            const data =await response.json();
             return data.pieces;
         } catch (error) {
             console.log('Error fetching letter data:', error);
@@ -342,7 +342,7 @@ $(document).ready(async function () {
     };
 
     const getWeightedLetterPool = async () => {
-        const pieces = await getLetter();
+        const pieces =await getLetter();
         const weightedLetterPool = [];
         pieces.forEach(piece => {
             for (let i = 0; i < piece.amount; i++) {
@@ -376,7 +376,7 @@ $(document).ready(async function () {
         // Reset the score display
         $('#word-score').text(0);
     
-        // Get new random letters equal to number of tiles removed
+        //Get new random letters equal to number of tiles removed
         
             for (const tile of placedTiles) {
                 const newLetter = await getRandomLetters(1);
@@ -397,10 +397,30 @@ $(document).ready(async function () {
         const letterObj = letterData.find(obj => obj.letter === letter);
         return letterObj ? letterObj.value : 0;
     }
+
+    const restartGame = async () => {
+        // Reset the total score
+        totalScoreAccumulated = 0;
+        $('#total-score').text(totalScoreAccumulated);
+    
+        //Reset the word score
+        $('#word-score').text(0);
+    
+        //Clear the placed tiles array
+        placedTiles.length = 0;
+    
+        //Clear the tiles from the board
+        clearPlacedTiles();
+    
+        // Re-initialize the game by resetting the tile rack
+        const letters = await getRandomLetters(13); // Get 7 new random letters
+        displayLettersOnHolder(letters);  // Refresh the tile rack with new letters
+    };
+    
     letterData = await getLetter();
     initializeGame();
     $('#submit-button').on('click', submitScore);
-   
+    $('#restart-button').on('click', restartGame);
    
    
 });
